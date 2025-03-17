@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 
@@ -13,7 +14,9 @@ import (
 )
 
 func main() {
-	token := "6738571788:AAEPdZ6Iu1C-79202rnv6vTKhFiduYqt9kU"
+	conf := config.GetConfig()
+	fmt.Println(conf)
+	token := conf.TelegramToken
 	webhookURL := "https://go-bot.jprq.site/webhook"
 	port := "8081"
 	if token == "" || webhookURL == "" || port == "" {
@@ -28,7 +31,6 @@ func main() {
 	dispatcher := handlers.Dispatcher()
 
 	config.InitDB()
-	db := config.GetDB()
 
 	r := gin.Default()
 
@@ -45,7 +47,6 @@ func main() {
 		c.Status(http.StatusOK)
 	})
 
-	// Set webhook
 	_, err = b.SetWebhook(webhookURL, nil)
 	if err != nil {
 		panic("failed to set webhook: " + err.Error())

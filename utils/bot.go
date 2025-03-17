@@ -2,7 +2,6 @@ package utils
 
 import (
 	"fmt"
-	"database/sql"
 	"menubot/config"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
