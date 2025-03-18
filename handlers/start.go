@@ -2,9 +2,10 @@ package handlers
 
 import (
 	"fmt"
+
 	"github.com/ShohruzNuraddinov/go-menu-bot/buttons"
+	"github.com/ShohruzNuraddinov/go-menu-bot/models"
 	"github.com/ShohruzNuraddinov/go-menu-bot/states"
-	"github.com/ShohruzNuraddinov/go-menu-bot/utils"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/PaulSonOfLars/gotgbot/v2/ext"
@@ -12,15 +13,15 @@ import (
 )
 
 func start(b *gotgbot.Bot, ctx *ext.Context) error {
-	user := utils.TelegramUser{}
+	user := models.TelegramUser{}
 	userData := user.GetUserData(ctx)
 	fullName := userData.FullName
-	if _, err := user.Create(&userData); err != nil {
-		return fmt.Errorf("failed to insert/update user: %w", err)
+	if _, err := user.GetByTelegramID(userData.ID); err != nil {
+		user.Create(&userData)
 	}
 
 	markup := buttons.StartInline()
-	_, err := ctx.EffectiveMessage.Reply(b, fmt.Sprintf("Ассалому алейкум Хуш Келибсиз, %s", fullName), &gotgbot.SendMessageOpts{
+	_, err := ctx.EffectiveMessage.Reply(b, fmt.Sprintf("Assalomu aleykum, Xush kelibsiz, %s", fullName), &gotgbot.SendMessageOpts{
 		ReplyMarkup: &markup,
 	})
 	if err != nil {

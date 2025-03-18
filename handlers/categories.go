@@ -2,7 +2,10 @@ package handlers
 
 import (
 	"fmt"
+	"strings"
+
 	"github.com/ShohruzNuraddinov/go-menu-bot/buttons"
+	"github.com/ShohruzNuraddinov/go-menu-bot/models"
 	"github.com/ShohruzNuraddinov/go-menu-bot/states"
 	"github.com/ShohruzNuraddinov/go-menu-bot/utils"
 
@@ -12,15 +15,17 @@ import (
 )
 
 func Categories(b *gotgbot.Bot, ctx *ext.Context) error {
-	u := utils.TelegramUser{}
+	u := models.TelegramUser{}
 	user := u.GetUserData(ctx)
+	c := models.Category{}
+	categories, _ := c.GetCategories()
 
 	del_err := utils.DeleteLastMessage(b, ctx.EffectiveMessage)
 	if del_err != nil {
 		return fmt.Errorf("failed to delete last message: %w", del_err)
 	}
 
-	markup := buttons.CategoriesInline()
+	markup := buttons.CategoriesInline(categories)
 	_, err := b.SendMessage(user.ID, "Kategoriyalar", &gotgbot.SendMessageOpts{
 		ReplyMarkup: &markup,
 	})
@@ -31,15 +36,12 @@ func Categories(b *gotgbot.Bot, ctx *ext.Context) error {
 }
 
 func Category(b *gotgbot.Bot, ctx *ext.Context) error {
-	u := utils.TelegramUser{}
+	u := models.TelegramUser{}
 	user := u.GetUserData(ctx)
 	callbackData := ctx.CallbackQuery.Data
-
-	del_err := utils.DeleteLastMessage(b, ctx.EffectiveMessage)
-	if del_err != nil {
-		return fmt.Errorf("failed to delete last message: %w", del_err)
+	if err := utils.DeleteLastMessage(b, ctx.EffectiveMessage); err != nil {
+		return fmt.Errorf("failed to delete last message: %w", err)
 	}
-
 	if callbackData == "back" {
 		markup := buttons.StartInline()
 		_, err := b.SendMessage(user.ID, "Bosh sahifa", &gotgbot.SendMessageOpts{
@@ -50,12 +52,19 @@ func Category(b *gotgbot.Bot, ctx *ext.Context) error {
 		}
 		return handlers.NextConversationState(states.CATEGORIES)
 	}
+	categoryId := strings.Split(callbackData, "_")[1]
+	ctx.Data["category"] = categoryId
+	c := models.Category{}
+	category, _ := c.GetCategoryByID(categoryId)
 
-	markup := buttons.ProductsInline()
+	p := models.Product{}
+	products, _ := p.GetProductsByCategory(categoryId)
+	markup := buttons.ProductsInline(products)
 	opts := &gotgbot.SendMessageOpts{
 		ReplyMarkup: &markup,
 	}
-	_, err := b.SendMessage(user.ID, fmt.Sprintf("Kategoriya %v", ctx.CallbackQuery.Data), opts)
+	content := fmt.Sprintf("Kategoriya: %v", category.Name)
+	_, err := b.SendMessage(user.ID, content, opts)
 	if err != nil {
 		return fmt.Errorf("failed to send category message: %w", err)
 	}

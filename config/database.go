@@ -10,7 +10,7 @@ import (
 
 var db *sql.DB
 
-func InitDB() {
+func InitDB() *sql.DB {
 	psqlInfo := GetConfig().psqlInfo
 
 	var err error
@@ -18,13 +18,13 @@ func InitDB() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer db.Close()
 
 	err = db.Ping()
 	if err != nil {
 		log.Fatal(err)
 	}
 	fmt.Println("Successfully connected!")
+	return db
 }
 
 func GetDB() *sql.DB {

@@ -30,7 +30,8 @@ func main() {
 
 	dispatcher := handlers.Dispatcher()
 
-	config.InitDB()
+	db := config.InitDB()
+	defer db.Close()
 
 	r := gin.Default()
 

@@ -1,7 +1,10 @@
 package buttons
 
 import (
+	"fmt"
+
 	"github.com/PaulSonOfLars/gotgbot/v2"
+	"github.com/ShohruzNuraddinov/go-menu-bot/models"
 )
 
 func StartInline() gotgbot.InlineKeyboardMarkup {
@@ -15,36 +18,37 @@ func StartInline() gotgbot.InlineKeyboardMarkup {
 	return btn
 }
 
-func CategoriesInline() gotgbot.InlineKeyboardMarkup {
+func CategoriesInline(categories []models.Category) gotgbot.InlineKeyboardMarkup {
+	var btns [][]gotgbot.InlineKeyboardButton
+	for _, category := range categories {
+		btns = append(btns, []gotgbot.InlineKeyboardButton{
+			{Text: category.Name, CallbackData: fmt.Sprintf("category_%d", category.ID)},
+		})
+	}
+	btns = append(btns, []gotgbot.InlineKeyboardButton{
+		{Text: "Orqaga", CallbackData: "back"},
+	})
 	btn := gotgbot.InlineKeyboardMarkup{
-		InlineKeyboard: [][]gotgbot.InlineKeyboardButton{
-			{
-				{Text: "Category 1", CallbackData: "category_1"},
-			},
-			{
-				{Text: "Category 2", CallbackData: "category_2"},
-			},
-			{
-				{Text: "Orqaga", CallbackData: "back"},
-			},
-		},
+		InlineKeyboard: btns,
 	}
 	return btn
 }
 
-func ProductsInline() gotgbot.InlineKeyboardMarkup {
+func ProductsInline(products []models.Product) gotgbot.InlineKeyboardMarkup {
+	var btns [][]gotgbot.InlineKeyboardButton
+
+	for _, product := range products {
+		btns = append(btns, []gotgbot.InlineKeyboardButton{
+			{Text: product.Name, CallbackData: fmt.Sprintf("products_%d", product.ID)},
+		})
+	}
+
+	btns = append(btns, []gotgbot.InlineKeyboardButton{
+		{Text: "Orqaga", CallbackData: "back"},
+	})
+
 	btn := gotgbot.InlineKeyboardMarkup{
-		InlineKeyboard: [][]gotgbot.InlineKeyboardButton{
-			{
-				{Text: "Product 1", CallbackData: "products_1"},
-			},
-			{
-				{Text: "Product 2", CallbackData: "products_2"},
-			},
-			{
-				{Text: "Orqaga", CallbackData: "back"},
-			},
-		},
+		InlineKeyboard: btns,
 	}
 	return btn
 }
