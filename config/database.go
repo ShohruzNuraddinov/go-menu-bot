@@ -10,7 +10,6 @@ import (
 
 var db *sql.DB
 
-
 func InitDB() {
 	psqlInfo := GetConfig().psqlInfo
 
@@ -19,6 +18,7 @@ func InitDB() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	defer db.Close()
 
 	err = db.Ping()
 	if err != nil {

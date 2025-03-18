@@ -2,9 +2,9 @@ package handlers
 
 import (
 	"fmt"
-	"menubot/buttons"
-	"menubot/states"
-	"menubot/utils"
+	"github.com/ShohruzNuraddinov/go-menu-bot/buttons"
+	"github.com/ShohruzNuraddinov/go-menu-bot/states"
+	"github.com/ShohruzNuraddinov/go-menu-bot/utils"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/PaulSonOfLars/gotgbot/v2/ext"

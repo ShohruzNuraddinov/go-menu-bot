@@ -2,7 +2,7 @@ package utils
 
 import (
 	"fmt"
-	"menubot/config"
+	"github.com/ShohruzNuraddinov/go-menu-bot/config"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/PaulSonOfLars/gotgbot/v2/ext"

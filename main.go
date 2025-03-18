@@ -6,8 +6,8 @@ import (
 	"log"
 	"net/http"
 
-	"menubot/config"
-	"menubot/handlers"
+	"github.com/ShohruzNuraddinov/go-menu-bot/config"
+	"github.com/ShohruzNuraddinov/go-menu-bot/handlers"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/gin-gonic/gin"

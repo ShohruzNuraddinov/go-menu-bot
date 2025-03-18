@@ -1,4 +1,4 @@
-module menubot
+module github.com/ShohruzNuraddinov/go-menu-bot
 
 go 1.24.0
 

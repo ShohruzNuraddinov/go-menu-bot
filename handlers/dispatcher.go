@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	"menubot/states"
+	"github.com/ShohruzNuraddinov/go-menu-bot/states"
 
 	"github.com/PaulSonOfLars/gotgbot/v2/ext"
 	"github.com/PaulSonOfLars/gotgbot/v2/ext/handlers"
