@@ -1,8 +1,8 @@
-# Use the official Golang image for building the application
-FROM golang:1.21 AS builder
+# Use a newer Go version that satisfies go.mod requirements
+FROM golang:latest
 
 # Set the working directory inside the container
-WORKDIR /app
+WORKDIR /go/src/app
 
 # Copy go.mod and go.sum files for dependency management
 COPY go.mod go.sum ./
@@ -16,17 +16,8 @@ COPY . .
 # Build the application
 RUN go build -o main .
 
-# Use a lightweight base image for the final container
-FROM alpine:latest
-
-# Set working directory
-WORKDIR /root/
-
-# Copy the built binary from the builder stage
-COPY --from=builder /app/main .
-
 # Expose the application port (adjust if needed)
-EXPOSE 8080
+EXPOSE 8081
 
 # Command to run the application
 CMD ["./main"]
