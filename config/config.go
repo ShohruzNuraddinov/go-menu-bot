@@ -9,7 +9,7 @@ import (
 
 type Config struct {
 	TelegramToken string
-	psqlInfo   string
+	psqlInfo      string
 }
 
 func GetConfig() *Config {
@@ -23,6 +23,5 @@ func GetConfig() *Config {
 	databaseName := os.Getenv("DATABASE_NAME")
 	psqlInfo := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable", databaseHost, databasePort, databaseUser, databasePassword, databaseName)
 	config.psqlInfo = psqlInfo
-
 	return &config
 }
