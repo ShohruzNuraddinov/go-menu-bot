@@ -4,8 +4,10 @@ import (
 	"fmt"
 
 	"github.com/ShohruzNuraddinov/go-menu-bot/buttons"
+	"github.com/ShohruzNuraddinov/go-menu-bot/config"
 	"github.com/ShohruzNuraddinov/go-menu-bot/models"
 	"github.com/ShohruzNuraddinov/go-menu-bot/states"
+	"gorm.io/gorm"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/PaulSonOfLars/gotgbot/v2/ext"
@@ -13,11 +15,15 @@ import (
 )
 
 func start(b *gotgbot.Bot, ctx *ext.Context) error {
-	user := models.TelegramUser{}
+	var user models.TelegramUser
 	userData := user.GetUserData(ctx)
 	fullName := userData.FullName
-	if _, err := user.GetByTelegramID(userData.ID); err != nil {
-		user.Create(&userData)
+	db := config.DB
+
+	if obj := db.First(&user, "telegram_id = ?", userData.TelegramID); obj.Error == gorm.ErrRecordNotFound {
+		db.Create(&user)
+	} else {
+		db.Model(&user).Updates(&userData)
 	}
 
 	markup := buttons.StartInline()

@@ -8,6 +8,7 @@ import (
 
 	"github.com/ShohruzNuraddinov/go-menu-bot/config"
 	"github.com/ShohruzNuraddinov/go-menu-bot/handlers"
+	"github.com/ShohruzNuraddinov/go-menu-bot/models"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/gin-gonic/gin"
@@ -31,7 +32,10 @@ func main() {
 	dispatcher := handlers.Dispatcher()
 
 	db := config.InitDB()
-	defer db.Close()
+
+	if err := models.Migrate(db); err != nil {
+		panic("failed to migrate: " + err.Error())
+	}
 
 	r := gin.Default()
 

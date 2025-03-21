@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/ShohruzNuraddinov/go-menu-bot/buttons"
+	"github.com/ShohruzNuraddinov/go-menu-bot/config"
 	"github.com/ShohruzNuraddinov/go-menu-bot/models"
 	"github.com/ShohruzNuraddinov/go-menu-bot/states"
 	"github.com/ShohruzNuraddinov/go-menu-bot/utils"
@@ -15,7 +16,7 @@ import (
 )
 
 func Products(b *gotgbot.Bot, ctx *ext.Context) error {
-	u := models.TelegramUser{}
+	var u models.TelegramUser
 	user := u.GetUserData(ctx)
 	callbackData := ctx.CallbackQuery.Data
 
@@ -24,10 +25,14 @@ func Products(b *gotgbot.Bot, ctx *ext.Context) error {
 	}
 
 	if callbackData == "back" {
-		c := models.Category{}
-		categories, _ := c.GetCategories()
+		var categories []models.Category
+
+		if err := config.DB.Model(&models.Category{}).Preload("Products").Find(&categories).Error; err != nil {
+			return fmt.Errorf("failed to get categories: %w", err)
+		}
+
 		markup := buttons.CategoriesInline(categories)
-		_, err := b.SendMessage(user.ID, "Kategoriyalar", &gotgbot.SendMessageOpts{
+		_, err := b.SendMessage(user.TelegramID, "Kategoriyalar", &gotgbot.SendMessageOpts{
 			ReplyMarkup: &markup,
 		})
 		if err != nil {
@@ -41,12 +46,15 @@ func Products(b *gotgbot.Bot, ctx *ext.Context) error {
 	opts := &gotgbot.SendMessageOpts{
 		ReplyMarkup: &markup,
 	}
-	p := models.Product{}
-	products, _ := p.GetProductByID(productId)
 
-	content := fmt.Sprintf("Nomi: %v\nNarx: %v\n\nHaqida: %v", products.Name, products.Price, products.Description)
+	var product models.Product
+	if err := config.DB.Where("id = ?", productId).First(&product).Error; err != nil {
+		return fmt.Errorf("failed to get product: %w", err)
+	}
 
-	_, err := b.SendMessage(user.ID, content, opts)
+	content := fmt.Sprintf("Nomi: %v\nNarx: %v\n\nHaqida: %v", product.Name, product.Price, product.Description)
+
+	_, err := b.SendMessage(user.TelegramID, content, opts)
 	if err != nil {
 		return fmt.Errorf("failed to send products message: %w", err)
 	}

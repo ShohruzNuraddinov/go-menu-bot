@@ -1,35 +1,25 @@
 package config
 
 import (
-	"database/sql"
 	"fmt"
 	"log"
+
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 
 	_ "github.com/lib/pq"
 )
 
-var db *sql.DB
+var DB *gorm.DB
 
-func InitDB() *sql.DB {
+func InitDB() *gorm.DB {
 	psqlInfo := GetConfig().psqlInfo
 
 	var err error
-	db, err = sql.Open("postgres", psqlInfo)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	err = db.Ping()
+	DB, err = gorm.Open(postgres.Open(psqlInfo), &gorm.Config{})
 	if err != nil {
 		log.Fatal(err)
 	}
 	fmt.Println("Successfully connected!")
-	return db
-}
-
-func GetDB() *sql.DB {
-	if db == nil {
-		log.Fatal("Database not initialized. Call InitDB() first.")
-	}
-	return db
+	return DB
 }
